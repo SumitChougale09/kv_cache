@@ -1,0 +1,62 @@
+{
+  "model": "distilgpt2",
+  "device": "mps",
+  "prompt": "The future of artificial intelligence depends on",
+  "num_runs": 3,
+  "results": [
+    {
+      "max_tokens": 10,
+      "latency_cached": 0.01787,
+      "latency_nocache": 0.11813,
+      "tps_cached": 559.82,
+      "tps_nocache": 102.9,
+      "speedup": 6.61,
+      "cache_mb": 0.5625
+    },
+    {
+      "max_tokens": 25,
+      "latency_cached": 0.04397,
+      "latency_nocache": 0.33083,
+      "tps_cached": 570.67,
+      "tps_nocache": 87.88,
+      "speedup": 7.52,
+      "cache_mb": 1.0898
+    },
+    {
+      "max_tokens": 50,
+      "latency_cached": 0.08581,
+      "latency_nocache": 0.75679,
+      "tps_cached": 583.49,
+      "tps_nocache": 76.28,
+      "speedup": 8.82,
+      "cache_mb": 1.9688
+    },
+    {
+      "max_tokens": 100,
+      "latency_cached": 0.16931,
+      "latency_nocache": 1.877,
+      "tps_cached": 590.72,
+      "tps_nocache": 60.88,
+      "speedup": 11.09,
+      "cache_mb": 3.7266
+    },
+    {
+      "max_tokens": 150,
+      "latency_cached": 0.37662,
+      "latency_nocache": 3.39319,
+      "tps_cached": 398.35,
+      "tps_nocache": 46.77,
+      "speedup": 9.01,
+      "cache_mb": 5.4844
+    },
+    {
+      "max_tokens": 200,
+      "latency_cached": 0.86082,
+      "latency_nocache": 17.42056,
+      "tps_cached": 256.77,
+      "tps_nocache": 15.63,
+      "speedup": 20.24,
+      "cache_mb": 7.2422
+    }
+  ]
+}
