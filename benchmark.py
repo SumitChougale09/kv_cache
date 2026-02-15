@@ -19,10 +19,6 @@ NUM_RUNS = 3  # Average over this many runs per data point
 
 
 def warmup(generator, cache_manager, prompt):
-    """
-    Run a dummy generation to trigger MPS shader compilation
-    and memory allocation before timing anything.
-    """
     print("  Warming up (compiling MPS shaders)...")
     cache_manager.reset()
     generator.generate_with_cache(prompt, max_tokens=5)
@@ -33,15 +29,10 @@ def warmup(generator, cache_manager, prompt):
 
 
 def benchmark_single(generator, cache_manager, prompt, max_tokens):
-    """Run one cached + one non-cached generation, return metrics."""
-
-    # --- WITH CACHE ---
     cache_manager.reset()
     _, latency_cached = generator.generate_with_cache(prompt, max_tokens)
     cache_mb = cache_manager.cache_size()
     tps_cached = max_tokens / latency_cached
-
-    # --- WITHOUT CACHE ---
     cache_manager.reset()
     _, latency_nocache = generator.generate_without_cache(prompt, max_tokens)
     tps_nocache = max_tokens / latency_nocache
@@ -56,10 +47,6 @@ def benchmark_single(generator, cache_manager, prompt, max_tokens):
 
 
 def run_benchmark(generator, cache_manager, prompt, token_counts):
-    """
-    Benchmarks cached vs non-cached generation across multiple sequence lengths.
-    Averages over NUM_RUNS runs per data point.
-    """
     results = []
 
     for max_tokens in token_counts:
@@ -74,12 +61,11 @@ def run_benchmark(generator, cache_manager, prompt, token_counts):
             print(f"  Run {run+1}: cached={metrics['latency_cached']:.4f}s  "
                   f"no_cache={metrics['latency_nocache']:.4f}s")
 
-        # Average across runs
         avg_cached = sum(r["latency_cached"] for r in run_data) / NUM_RUNS
         avg_nocache = sum(r["latency_nocache"] for r in run_data) / NUM_RUNS
         avg_tps_cached = sum(r["tps_cached"] for r in run_data) / NUM_RUNS
         avg_tps_nocache = sum(r["tps_nocache"] for r in run_data) / NUM_RUNS
-        cache_mb = run_data[-1]["cache_mb"]  # Same every run
+        cache_mb = run_data[-1]["cache_mb"]
 
         speedup = avg_nocache / avg_cached if avg_cached > 0 else 0
 
@@ -123,12 +109,9 @@ def main():
     print(f"Sequence lengths: {token_counts}")
     print(f"RAM at start: {get_ram_usage():.1f} MB\n")
 
-    # Warm-up to eliminate MPS shader compilation from timing
     warmup(generator, cache_manager, prompt)
 
     results = run_benchmark(generator, cache_manager, prompt, token_counts)
-
-    # Save results
     output = {
         "model": "distilgpt2",
         "device": device,
@@ -144,7 +127,6 @@ def main():
     print("Results saved to benchmark_results.json")
     print(f"{'='*60}")
 
-    # Print summary table
     print(f"\n{'Tokens':<10}{'Cached (s)':<14}{'No Cache (s)':<14}{'Speedup':<10}{'Cache MB':<10}")
     print("-" * 58)
     for r in results:
